@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.9
+#!/usr/bin/env python3
 
 # Name: rss2masto.py
 # Author: Leon Cowle - https://github.com/leoncowle or https://hachyderm.io/@leoncowle on Mastodon
