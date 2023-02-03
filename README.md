@@ -2,6 +2,10 @@
 
 A really simple script [rss :-)] to scrape RSS feeds and post them into a Mastodon account
 
+If you're like me, and aren't really into using RSS Readers, but you'd still like to keep up with a handful of RSS feeds, then RSS2MASTO might be just what you're looking for. I wrote it for me, but maybe others find it useful, too.
+
+It scrapes RSS feeds and posts them into a Mastodon account, which you can then follow with your main account. And never miss those updates again!
+
 ## Getting Started
 
 **MASTODON PREREQS:**
@@ -34,6 +38,10 @@ pip install requests
 ## Running it
 
 Edit rss2masto.py, and at the bottom, edit the RSS feeds you want, and/or add more. Give each a friendly name in the 1st argument.
+
+Either manually run the script (remember to add your access token into the ini file OR into the MASTOTOKEN environment variable), or add it to cron.
+
+**BEWARE: There is currently no file locking on the DB file (or other concurrency checks), so don't run multiple instances of the script concurrently. If you put it in cron, space them out appropriately.**
 
 ## Contributing
 

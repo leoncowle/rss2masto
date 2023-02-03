@@ -1,5 +1,11 @@
 #!/usr/local/bin/python3.9
 
+# Name: rss2masto.py
+# Author: Leon Cowle - https://github.com/leoncowle or https://hachyderm.io/@leoncowle on Mastodon
+# Copyright: 2023 Leon Cowle
+# License: MIT (see LICENSE file)
+# Version: 0.1
+
 import bs4
 import feedparser
 import sqlite3
