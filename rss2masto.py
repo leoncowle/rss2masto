@@ -17,16 +17,20 @@ mastoBASE = ""
 mastoTOKEN = ""
 mastoURL = ""
 mastoDB = ""
+mastoINI = "rss2masto.ini"
+debug = True   # this one you can edit, and change to False to suppress progress output
 ################################################################
 
 def read_config():
+  ''' read config from rss2masto.ini and store into global variables '''
+  ''' yes i know global variables are bad, but for a small script like this, I'm ok with that :-) '''
   global mastoHOST
   global mastoTOKEN
   global mastoDB
   global mastoURL
   global mastoBASE
   config = configparser.ConfigParser()
-  config.read("rss2masto.ini")
+  config.read(mastoINI)
   mastoHOST = config["GLOBAL"]["mastoHOST"]
   mastoDB = config["GLOBAL"]["mastoDB"]
   mastoBASE = "/api/v1/statuses"
@@ -149,7 +153,8 @@ class rss2masto():
 
       if entryDigest in self.existingHashes:
         # calculated hash is already in our DB, so we've seen this post before
-        print(f"Skipping (already seen): {self.entryLink} {self.entryTitle}")
+        if debug:
+          print(f"Skipping (already seen): {self.entryLink} {self.entryTitle}")
         continue
 
       if self._mastoPOST():
@@ -157,7 +162,8 @@ class rss2masto():
         # Let's update dict and DB
         self.existingHashes[entryDigest] = True
         sql3_insert(self.conn, entryDigest)
-        print(f"Successfully posted to Masto: {self.entryLink} {self.entryTitle}")
+        if debug:
+          print(f"Successfully posted to Masto: {self.entryLink} {self.entryTitle}")
 
     # Commit once we've run through all the RSS items (entries)
     self.conn.commit()
@@ -167,7 +173,6 @@ if __name__ == '__main__':
 
   # Get configs from rss2masto.ini
   read_config()
-  print(mastoHOST, mastoURL)
 
   # Get DB connection
   conn = sql3_create_connection(mastoDB)
@@ -179,12 +184,17 @@ if __name__ == '__main__':
   existingHashes = sql3_getAll(conn)
 
   # Process feed(s)
-  rss2masto("DARING FIREBALL", "https://daringfireball.net/feeds/main", conn, existingHashes).process()
-  rss2masto("CASEYLISS.COM", "https://www.caseyliss.com/rss", conn, existingHashes).process()
+  #rss2masto("<friendly-name>", "<feed url>", conn, existingHashes).process()
+  #rss2masto("<friendly-name>", "<feed url>", conn, existingHashes).process()
+  #rss2masto("<friendly-name>", "<feed url>", conn, existingHashes).process()
+  #rss2masto("<friendly-name>", "<feed url>", conn, existingHashes).process()
+  #rss2masto("<friendly-name>", "<feed url>", conn, existingHashes).process()
+  #rss2masto("<friendly-name>", "<feed url>", conn, existingHashes).process()
 
-#NewsFeed = feedparser.parse("https://daringfireball.net/feeds/main")
-#NewsFeed = feedparser.parse("https://www.rssboard.org/files/sample-rss-2.xml")
-#NewsFeed = feedparser.parse("https://feedpress.me/sixcolors?type=xml")
-#NewsFeed = feedparser.parse("https://www.theverge.com/apple/rss/index.xml")
-#NewsFeed = feedparser.parse("https://www.cnet.com/rss/news")
-#NewsFeed = feedparser.parse("https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml")
+  # Some examples:
+  rss2masto("DARING FIREBALL", "https://daringfireball.net/feeds/main", conn, existingHashes).process()
+  #rss2masto("CASEYLISS.COM", "https://www.caseyliss.com/rss", conn, existingHashes).process()
+  #rss2masto("NYT US", "https://rss.nytimes.com/services/xml/rss/nyt/US.xml", conn, existingHashes).process() 
+  #rss2masto("SIXCOLORS", "https://feedpress.me/sixcolors?type=xml", conn, existingHashes).process()
+  #rss2masto("THE VERGE: APPLE", "https://www.theverge.com/apple/rss/index.xml", conn, existingHashes).process()
+  #rss2masto("CNET NEWS", "https://www.cnet.com/rss/news", conn, existingHashes).process()
