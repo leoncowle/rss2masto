@@ -120,6 +120,9 @@ class rss2masto():
       r = requests.post(mastoURL, headers=headers, data=data)
     except requests.exceptions.RequestException as e:
       raise SystemExit(e)
+
+    if r.status_code != 200 and debug:
+      print(r.text)
     
     return r.status_code == 200
 
