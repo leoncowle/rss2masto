@@ -7,14 +7,37 @@ import sys
 import hashlib
 import requests
 import re
+import os
+import configparser
 
 ####################### GLOBAL VARIABLES #######################
-mastoHOST = "https://hachyderm.io"
-mastoBASE = "/api/v1/statuses"
-mastoTOKEN = "_sR1aRZ83OWhQ1i8wyUYEsWna7rENrXieqp7D09JRl0"
-mastoURL = mastoHOST + mastoBASE + "?access_token=" + mastoTOKEN
-mastoDB = "rss2masto.db"
+########### DO NOT EDIT THESE. EDIT rss2masto.ini INSTEAD ######
+mastoHOST = ""
+mastoBASE = ""
+mastoTOKEN = ""
+mastoURL = ""
+mastoDB = ""
 ################################################################
+
+def read_config():
+  global mastoHOST
+  global mastoTOKEN
+  global mastoDB
+  global mastoURL
+  global mastoBASE
+  config = configparser.ConfigParser()
+  config.read("rss2masto.ini")
+  mastoHOST = config["GLOBAL"]["mastoHOST"]
+  mastoDB = config["GLOBAL"]["mastoDB"]
+  mastoBASE = "/api/v1/statuses"
+  if config["GLOBAL"]["mastoTOKEN"]:
+    mastoTOKEN = config["GLOBAL"]["mastoTOKEN"]
+  elif "MASTOTOKEN" in os.environ:
+    mastoTOKEN = os.environ["MASTOTOKEN"]
+  else:
+    print("No token found in rss2masto.ini or in MASTOTOKEN env variable. Exiting...")
+    sys.exit(1)
+  mastoURL = mastoHOST + mastoBASE + "?access_token=" + mastoTOKEN
 
 def sql3_create_connection(db_file):
   """ create a database connection to a SQLite database """
@@ -141,6 +164,10 @@ class rss2masto():
 
 # MAIN
 if __name__ == '__main__':
+
+  # Get configs from rss2masto.ini
+  read_config()
+  print(mastoHOST, mastoURL)
 
   # Get DB connection
   conn = sql3_create_connection(mastoDB)
