@@ -1,3 +1,10 @@
+# rss2masto.db DB file
+rss2masto.db
+
+# Standard Python entries for .gitignore below (from github template)
+
+########################################################################################
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
