@@ -98,6 +98,7 @@ class rss2masto():
     self.conn = conn
     self.entryLink = None
     self.entryTitle = None
+    self.siteURL = None
     self.existingHashes = existingHashes
 
   def _testURL(self, url):
@@ -115,7 +116,7 @@ class rss2masto():
   def _mastoPOST(self):
     """ Post to Mastodon """
     headers = {'Content-Type':'application/x-www-form-URLencoded'}
-    data = {'status':f'FROM: {self.name}\n\nTITLE: {self.entryTitle}\n\n{self.entryLink}'}
+    data = {'status':f'FROM: {self.name}\nMAIN URL: {self.siteURL}\n\nTITLE: {self.entryTitle}\n\n{self.entryLink}'}
     try:
       r = requests.post(mastoURL, headers=headers, data=data)
     except requests.exceptions.RequestException as e:
@@ -132,6 +133,7 @@ class rss2masto():
     if rssFeed.status != 200:
       print("Error crawling {url}... Skipping...")
       return
+    self.siteURL = rssFeed.feed.link
     for entry in rssFeed.entries:
       # Determine whether to use entry.link or entry.id as the link to the RSS item
       # NOTE: 'guid' in the RSS item translates to 'id' in the feedparser entry dict
@@ -202,6 +204,7 @@ if __name__ == '__main__':
 
   # Some examples:
   rss2masto("DARING FIREBALL", "https://daringfireball.net/feeds/main", conn, existingHashes).process()
+  #rss2masto("Open Access Tracking Project", "http://tagteam.harvard.edu/remix/oatp/items.rss", conn, existingHashes).process()
   #rss2masto("CASEYLISS.COM", "https://www.caseyliss.com/rss", conn, existingHashes).process()
   #rss2masto("NYT US", "https://rss.nytimes.com/services/xml/rss/nyt/US.xml", conn, existingHashes).process() 
   #rss2masto("SIXCOLORS", "https://feedpress.me/sixcolors?type=xml", conn, existingHashes).process()
