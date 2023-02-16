@@ -24,7 +24,7 @@ mastoTOKEN = ""
 mastoURL = ""
 mastoDB = ""
 mastoINI = "rss2masto.ini"
-debug = True   # this one you can edit, and change to False to suppress progress output
+debug = False   # this one you can edit, and change to False to suppress progress output
 ################################################################
 
 def read_config():
@@ -130,8 +130,14 @@ class rss2masto():
   def process(self):
     """ Process a specific feed, using feedparser module """
     rssFeed = feedparser.parse(self.url)
+    if rssFeed.status == 301 or rssFeed.status == 302:
+      # We got a redirect response, let's see if we can grab the new suggested url (in rssFeed.href) instead...
+      if self._testURL(rssFeed.href):
+        if debug:
+          print(f"{self.url} responded with 301/302 to {rssFeed.href}... Trying that instead...")
+        rssFeed = feedparser.parse(rssFeed.href)
     if rssFeed.status != 200:
-      print("Error crawling {url}... Skipping...")
+      print(f"Error crawling {self.url}... Skipping...")
       return
     self.siteURL = rssFeed.feed.link
     for entry in rssFeed.entries:
