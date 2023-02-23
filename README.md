@@ -28,9 +28,7 @@ You can optionally add the Mastodon account's access token into the ini file. Al
 You'll need a few Python modules (which you can install into your global Python instance, or into a venv if you choose [outside the scope of this README]):
 
 ```
-pip install bs4
-pip install feedparser
-pip install requests
+pip install -r requirements.txt
 ```
 
 (use pip or pip3, as needed)
